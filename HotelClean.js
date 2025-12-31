@@ -3,18 +3,18 @@
 // ============================================================================
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { 
-    getFirestore, 
-    doc, 
-    setDoc, 
-    collection, 
-    onSnapshot, 
-    updateDoc, 
+import {
+    getFirestore,
+    doc,
+    setDoc,
+    collection,
+    onSnapshot,
+    updateDoc,
     serverTimestamp
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-import { 
-    initializeAppCheck, 
-    ReCaptchaV3Provider 
+import {
+    initializeAppCheck,
+    ReCaptchaV3Provider
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app-check.js";
 
 const firebaseConfig = {
@@ -39,7 +39,6 @@ const initSecurity = () => {
                     provider: new ReCaptchaV3Provider('6LfTyzssAAAAAPNINdUzSne0oJQxBkW1_oK-bUgh'),
                     isTokenAutoRefreshEnabled: true
                 });
-                console.log("✅ App Check Protected");
             } catch (err) {
                 console.error("App Check Init Error:", err);
             }
@@ -103,14 +102,13 @@ const generatePropertyID = () => {
 
 // Save form values to localStorage
 const saveToLocal = () => {
-    console.log("Saving to LocalStorage:", propInput.value, empSelect.value);
     localStorage.setItem('hotelPropId', propInput.value);
     localStorage.setItem('hotelEmpId', empSelect.value);
 };
 
 // Build status dropdown HTML
 const buildStatusDropdown = (currentStatus) => {
-    return STATUS_OPTIONS.map(option => 
+    return STATUS_OPTIONS.map(option =>
         `<option value="${option.value}" ${currentStatus === option.value ? 'selected' : ''}>${option.label}</option>`
     ).join('');
 };
@@ -118,15 +116,15 @@ const buildStatusDropdown = (currentStatus) => {
 // Validate room creation inputs
 const validateRoomInputs = (propId, selectedDate, currentEmp) => {
     if (!propId || propId.length < 6) {
-        showToast("Please enter a valid Property ID (6 characters).", "error");
+        alert("Please enter a valid Property ID (6 characters).");
         return false;
     }
     if (!selectedDate) {
-        showToast("Please select a date first!", "error");
+        alert("Please select a date first!");
         return false;
     }
     if (!currentEmp) {
-        showToast("Please select an employee first!", "error");
+        alert("Please select an employee first!");
         return false;
     }
     return true;
@@ -138,6 +136,10 @@ const validateRoomInputs = (propId, selectedDate, currentEmp) => {
 // Render a single room row in the table
 const renderRow = (docId, data) => {
     const tr = document.createElement('tr');
+    const hasNotes = data.notes && data.notes.trim().length > 0;
+    const iconColor = hasNotes ? '#007bff' : '#999';
+    const iconBorderColor = hasNotes ? '#007bff' : '#999';
+    
     tr.innerHTML = `
         <td><strong>${data.number}</strong></td>
         <td>
@@ -149,32 +151,59 @@ const renderRow = (docId, data) => {
             </select>
         </td>
         <td>
-            <input type="text" 
-                class="notes-input" 
-                value="${data.notes || ''}" 
-                placeholder="Add notes..."
-            >
+            <div class="notes-container" style="display: flex; align-items: center; gap: 10px;">
+                <button class="notes-icon-btn" style="
+                    width: 30px;
+                    height: 30px;
+                    border-radius: 50%;
+                    border: 2px solid ${iconBorderColor};
+                    background: white;
+                    color: ${iconColor};
+                    font-weight: bold;
+                    font-size: 16px;
+                    cursor: pointer;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    padding: 0;
+                ">i</button>
+                <input type="text" 
+                    class="notes-input" 
+                    value="${data.notes || ''}" 
+                    placeholder="Add notes..."
+                    style="display: none; flex: 1; padding: 5px;"
+                >
+            </div>
         </td>
     `;
-    
+
     // Attach event listeners safely (avoid inline handlers to prevent injection)
     const statusSelect = tr.querySelector('select');
     const notesInput = tr.querySelector('.notes-input');
-    
+    const notesIconBtn = tr.querySelector('.notes-icon-btn');
+
     statusSelect.addEventListener('change', () => {
         updateStatus(docId, statusSelect.value);
     });
-    
+
+    // Toggle notes input visibility when circle icon is clicked
+    notesIconBtn.addEventListener('click', () => {
+        const isHidden = notesInput.style.display === 'none';
+        notesInput.style.display = isHidden ? 'block' : 'none';
+        if (isHidden) {
+            notesInput.focus();
+        }
+    });
+
     notesInput.addEventListener('blur', () => {
         updateNotes(docId, notesInput.value);
     });
-    
+
     roomTableBody.appendChild(tr);
 };
 
 // Populate employee dropdown from database
 const renderEmployeeDropdown = (employees) => {
-    console.log("Rendering Dropdown with:", employees);
 
     if (!empSelect) {
         console.error("HTML element 'empId' not found!");
@@ -182,8 +211,7 @@ const renderEmployeeDropdown = (employees) => {
     }
 
     const savedEmp = localStorage.getItem('hotelEmpId');
-    console.log("Saved employee from localStorage:", savedEmp);
-    
+
     empSelect.innerHTML = "";
 
     if (Array.isArray(employees)) {
@@ -191,15 +219,14 @@ const renderEmployeeDropdown = (employees) => {
             const opt = document.createElement('option');
             opt.value = name;
             opt.textContent = name;
-            
+
             if (savedEmp && name === savedEmp) {
                 opt.selected = true;
-                console.log("Selected saved employee:", name);
             }
-            
+
             empSelect.appendChild(opt);
         });
-        
+
         if (!savedEmp || !employees.includes(savedEmp)) {
             empSelect.value = employees[0];
             console.log("No saved employee found, using first option:", employees[0]);
@@ -209,22 +236,7 @@ const renderEmployeeDropdown = (employees) => {
     }
 };
 
-// Show temporary notification toast
-const showToast = (msg, type = "error") => {
-    const container = document.getElementById('toast-container');
-    const toast = document.createElement('div');
-    toast.className = `toast ${type}`;
-    toast.innerHTML = `
-        <span>${msg}</span>
-        <button class="toast-close">&times;</button>
-    `;
-    
-    container.appendChild(toast);
-    toast.querySelector('.toast-close').onclick = () => toast.remove();
-    setTimeout(() => {
-        if (toast.parentNode) toast.remove();
-    }, 5000);
-};
+
 
 // ============================================================================
 // FIREBASE OPERATIONS - UPDATE FUNCTIONS
@@ -236,10 +248,9 @@ window.updateStatus = async (roomId, newStatus) => {
     try {
         const roomRef = doc(db, "HotelClean", propInput.value, "dates", dateInput.value, "rooms", roomId);
         await updateDoc(roomRef, { status: newStatus });
-        console.log("Updated status for room:", roomId, "to", newStatus);
     } catch (e) {
         console.error("Error updating status:", e);
-        showToast("Failed to update status", "error");
+        alert("Failed to update status");
     }
 };
 
@@ -248,10 +259,9 @@ window.updateNotes = async (roomId, newNotes) => {
     try {
         const roomRef = doc(db, "HotelClean", propInput.value, "dates", dateInput.value, "rooms", roomId);
         await updateDoc(roomRef, { notes: newNotes });
-        console.log("Updated notes for room:", roomId);
     } catch (e) {
         console.error("Error updating notes:", e);
-        showToast("Failed to update notes", "error");
+        alert("Failed to update notes");
     }
 };
 
@@ -262,9 +272,8 @@ window.updateNotes = async (roomId, newNotes) => {
 // Listen for real-time room updates
 const setupRoomsListener = (propId, selectedDate, selectedEmp) => {
     const roomsRef = collection(db, "HotelClean", propId, "dates", selectedDate, "rooms");
-    
+
     window.currentRoomsListener = onSnapshot(roomsRef, (snapshot) => {
-        console.log("Rooms updated! Count:", snapshot.size);
 
         roomTableBody.innerHTML = "";
 
@@ -277,7 +286,7 @@ const setupRoomsListener = (propId, selectedDate, selectedEmp) => {
         });
     }, (error) => {
         console.error("Rooms listener failed:", error);
-        showToast("Failed to load rooms", "error");
+        alert("Failed to load rooms");
     });
 };
 
@@ -288,7 +297,6 @@ const setupPropertyDetailsListener = (propId, nameDisplay) => {
     window.currentPropertyListener = onSnapshot(propRef, (docSnap) => {
         if (docSnap.exists()) {
             const data = docSnap.data();
-            console.log("Property Data Found:", data);
 
             const employeeList = data.employees || ["Manager"];
             renderEmployeeDropdown(employeeList);
@@ -304,14 +312,13 @@ const setupPropertyDetailsListener = (propId, nameDisplay) => {
             }
         } else {
             console.warn("No such property document!");
-            showToast("Error: Property not found", "error");
+            alert("Property not found. Please check your Property ID.");
         }
     });
 };
 
 // Synchronize with Firestore data
 const startSync = () => {
-    console.log("Starting sync...");
     if (window.currentRoomsListener) window.currentRoomsListener();
     if (window.currentPropertyListener) window.currentPropertyListener();
 
@@ -350,39 +357,37 @@ document.getElementById('btnNew').onclick = async () => {
         saveToLocal();
         startSync();
 
-        showToast(`Success! Property ID: ${newId}`, "success");
         alert(`Success! Your new Property ID is: ${newId}. Save this to access your list later.`);
 
     } catch (e) {
         console.error("Error creating property:", e);
-        showToast("Failed to create property", "error");
+        alert("Failed to create property");
     }
 };
 
 // Add new employee to property
 document.getElementById('btnEdit').onclick = async () => {
     const newEmp = prompt("Enter New Employee Name:");
-    
+
     if (!newEmp || !propInput.value) {
-        showToast("Invalid input", "error");
+        alert("Invalid input");
         return;
     }
 
     try {
         const { arrayUnion } = await import("https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js");
         const propRef = doc(db, "HotelClean", propInput.value);
-        
+
         await updateDoc(propRef, {
             employees: arrayUnion(newEmp)
         });
-        
+
         empSelect.value = newEmp;
         saveToLocal();
-        showToast("Employee added successfully", "success");
-
+        alert("Employee added successfully");
     } catch (e) {
         console.error("Error adding employee:", e);
-        showToast("Failed to add employee", "error");
+        alert("Failed to add employee");
     }
 };
 
@@ -411,10 +416,10 @@ document.getElementById('btnAddRoom').addEventListener('click', async () => {
             lastUpdated: serverTimestamp()
         });
 
-        showToast("Room added successfully", "success");
+        alert("Room added successfully");
     } catch (e) {
         console.error("Error adding room:", e);
-        showToast(`Error: ${e.message}`, "error");
+        alert(`Error: ${e.message}`);
     }
 });
 
@@ -437,11 +442,8 @@ const handleUIEvent = () => {
     const selectedDate = dateInput.value;
 
     if (propId.length === 6 && selectedDate) {
-        console.log("✓ Valid input - starting sync");
         startSync();
-    } else {
-        console.log(`✗ Invalid input - PropId length: ${propId.length} (expected 6), Date selected: ${!!selectedDate}`);
-    }
+    };
 };
 
 // ============================================================================
@@ -469,7 +471,7 @@ document.getElementById('empId')?.addEventListener('change', () => {
 const initializeLocalStorage = (propInput, empSelect, dateInput) => {
     const savedPropId = localStorage.getItem('hotelPropId');
     const today = new Date().toISOString().split('T')[0];
-    
+
     dateInput.value = today;
 
     if (savedPropId) {
@@ -495,4 +497,7 @@ window.addEventListener('DOMContentLoaded', () => {
     if (savedPropId) {
         startSync();
     }
+    // Set theme based on system preference
+    const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    document.documentElement.setAttribute('data-bs-theme', systemPrefersDark ? 'dark' : 'light');
 });
