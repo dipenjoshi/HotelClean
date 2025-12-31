@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HotelClean Tool</title>
+    <script src="https://www.google.com/recaptcha/api.js?render=6LfTyzssAAAAAPNINdUzSne0oJQxBkW1_oK-bUgh"></script>
+    <link rel="stylesheet" href="HotelClean.css">
+    <script type="module" src="./HotelClean.js"></script>
+    <link rel="icon" type="image/png" href="favicon.png">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@exampledev/new.css@1.1.2/new.min.css">
+</head>
+
+<body>
+
+    <div id="app">
+        <header>
+            <h1 class="text-3xl font-bold text-center mb-6" style="color: var(--text-primary);">Hotel Clean
+                <a href="FAQ.html" class="faq-floating-btn" rel="help" title="Frequently Asked Questions"
+                    style="color: blue;">?</a>
+            </h1>
+        </header>
+        <div class="info-group">
+            <div class="info-group">
+                <label>Property ID: </label>
+                <input type="text" id="propId" maxlength="6" placeholder="12AC5">
+                <span id="propertyNameDisplay" class="prop-name-badge"></span>
+                <button id="btnNew" class="btn-add">New Property</button>
+            </div>
+        </div>
+        <div class="info-group">
+            <label>Employee ID: </label>
+            <select id="empId">
+            </select>
+            <button id="btnEdit" class="btn-add">New Employee</button>
+        </div>
+        <div class="info-group">
+            <label>Date: </label>
+            <input type="date" class="date-picker" id="dateSelect" />
+        </div>
+        <hr>
+        <div class="controls">
+            <button id="btnAddRoom" class="btn-add">New Room</button>
+        </div>
+        <main>
+            <table id="roomTable">
+                <thead>
+                    <tr>
+                        <th>Room</th>
+                        <th>Status</th>
+                        <th>Notes</th>
+                    </tr>
+                </thead>
+                <tbody id="roomListBody">
+                </tbody>
+            </table>
+        </main>
+    </div>
+    <div id="toast-container" class="toast-container"></div>
+</body>
+
+</html>
