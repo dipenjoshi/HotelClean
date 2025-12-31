@@ -26,31 +26,31 @@
         <div class="row g-3 align-items-end">
             <div class="col-12 col-md-6">
                 <label class="form-label">Property ID: </label>
-                <input type="text" id="propId" class="form-control" placeholder="12AC5">
+                <input type="text" id="propId" class="form-control" title="Add existing property ID or create new" placeholder="12AC5">
             </div>
             <div class="col-12 col-md-6 text-end">
-                <button id="btnNew" class="btn btn-primary">New Property</button>
+                <button id="btnNew" class="btn btn-primary" title="Create New Property ID">New Property</button>
             </div>
         </div>
         <div class="row g-3 mt-2">
             <div class="col-12 col-md-6">
-                <label class="form-label">Employee ID: </label>
+                <label class="form-label">Employee: </label>
                 <select id="empId" class="form-select">
                 </select>
             </div>
             <div class="col-12 col-md-6 d-flex align-items-end">
-                <button id="btnEdit" class="btn btn-primary ms-auto">New Employee</button>
+                <button id="btnEdit" class="btn btn-primary ms-auto" title="Add new Employee">New Employee</button>
             </div>
         </div>
+        <hr>
         <div class="row g-3 mt-2">
             <div class="col-12 col-md-6">
                 <label class="form-label">Date: </label>
                 <input type="date" class="form-control date-picker" id="dateSelect" />
             </div>
-        </div>
-        <hr>
-        <div class="mb-3">
-            <button id="btnAddRoom" class="btn btn-success ms-auto d-block">New Room</button>
+            <div class="col-12 col-md-6 d-flex align-items-end">
+                <button id="btnAddRoom" class="btn btn-success ms-auto d-block" title="Add New Room" >New Room</button>
+            </div>
         </div>
         <main class="mt-4">
             <div class="table-responsive">
@@ -68,7 +68,7 @@
             </div>
         </main>
     </div>
-    
+
     <!-- Bootstrap 5 JS CDN -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
