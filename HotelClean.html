@@ -6,58 +6,72 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>HotelClean Tool</title>
     <script src="https://www.google.com/recaptcha/api.js?render=6LfTyzssAAAAAPNINdUzSne0oJQxBkW1_oK-bUgh"></script>
+    <!-- Bootstrap 5 CSS CDN for responsive design -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="HotelClean.css">
     <script type="module" src="./HotelClean.js"></script>
     <link rel="icon" type="image/png" href="favicon.png">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@exampledev/new.css@1.1.2/new.min.css">
 </head>
 
 <body>
 
-    <div id="app">
-        <header>
-            <h1 class="text-3xl font-bold text-center mb-6" style="color: var(--text-primary);">Hotel Clean
+    <div id="app" class="container-fluid py-4">
+        <header class="mb-4">
+            <h1 class="text-center mb-3" style="color: var(--text-primary);">Hotel Clean
                 <a href="FAQ.html" class="faq-floating-btn" rel="help" title="Frequently Asked Questions"
                     style="color: blue;">?</a>
             </h1>
         </header>
-        <div class="info-group">
-            <div class="info-group">
-                <label>Property ID: </label>
-                <input type="text" id="propId" maxlength="6" placeholder="12AC5">
-                <span id="propertyNameDisplay" class="prop-name-badge"></span>
-                <button id="btnNew" class="btn-add">New Property</button>
+        <div class="row g-3">
+            <div class="col-12">
+                <div class="info-group">
+                    <label class="form-label">Property ID: </label>
+                    <div class="d-flex flex-column flex-md-row gap-2">
+                        <input type="text" id="propId" class="form-control" maxlength="6" placeholder="12AC5">
+                        <span id="propertyNameDisplay" class="prop-name-badge"></span>
+                        <button id="btnNew" class="btn btn-primary">New Property</button>
+                    </div>
+                </div>
             </div>
         </div>
-        <div class="info-group">
-            <label>Employee ID: </label>
-            <select id="empId">
-            </select>
-            <button id="btnEdit" class="btn-add">New Employee</button>
+        <div class="row g-3 mt-2">
+            <div class="col-12 col-md-6">
+                <label class="form-label">Employee ID: </label>
+                <select id="empId" class="form-select">
+                </select>
+            </div>
+            <div class="col-12 col-md-6">
+                <label class="form-label">Date: </label>
+                <input type="date" class="form-control date-picker" id="dateSelect" />
+            </div>
         </div>
-        <div class="info-group">
-            <label>Date: </label>
-            <input type="date" class="date-picker" id="dateSelect" />
+        <div class="row g-3 mt-2">
+            <div class="col-12">
+                <button id="btnEdit" class="btn btn-primary me-2">New Employee</button>
+                <button id="btnAddRoom" class="btn btn-success">New Room</button>
+            </div>
         </div>
         <hr>
-        <div class="controls">
-            <button id="btnAddRoom" class="btn-add">New Room</button>
-        </div>
-        <main>
-            <table id="roomTable">
-                <thead>
-                    <tr>
-                        <th>Room</th>
-                        <th>Status</th>
-                        <th>Notes</th>
-                    </tr>
-                </thead>
-                <tbody id="roomListBody">
-                </tbody>
-            </table>
+        <main class="mt-4">
+            <div class="table-responsive">
+                <table id="roomTable" class="table table-striped table-hover">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Room</th>
+                            <th>Status</th>
+                            <th>Notes</th>
+                        </tr>
+                    </thead>
+                    <tbody id="roomListBody">
+                    </tbody>
+                </table>
+            </div>
         </main>
     </div>
     <div id="toast-container" class="toast-container"></div>
+    
+    <!-- Bootstrap 5 JS CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 
 </html>
