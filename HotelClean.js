@@ -500,4 +500,15 @@ window.addEventListener('DOMContentLoaded', () => {
     // Set theme based on system preference
     const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
     document.documentElement.setAttribute('data-bs-theme', systemPrefersDark ? 'dark' : 'light');
+
+    // Refresh data when the tab becomes active
+    document.addEventListener('visibilitychange', () => {
+        if (document.visibilityState === 'visible') {
+            console.log("Tab is visible, re-syncing data.");
+            const savedPropId = localStorage.getItem('hotelPropId');
+            if (savedPropId) {
+                startSync();
+            }
+        }
+    });
 });
